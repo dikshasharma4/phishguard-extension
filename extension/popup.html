@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhishGuard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 340px;
+    min-height: 420px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    font-size: 13px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid #21262d;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .logo-text {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .logo-sub {
+    font-size: 10px;
+    color: #7d8590;
+    margin-top: 1px;
+  }
+  .header-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  /* URL bar */
+  .url-bar {
+    padding: 10px 16px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+  }
+  .url-label {
+    font-size: 10px;
+    color: #7d8590;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .url-text {
+    font-size: 11px;
+    color: #c9d1d9;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    line-height: 1.4;
+  }
+
+  /* Score section */
+  .score-section {
+    padding: 18px 16px 14px;
+    text-align: center;
+    position: relative;
+  }
+  .score-ring-wrap {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 14px;
+  }
+  .score-ring {
+    transform: rotate(-90deg);
+  }
+  .ring-bg {
+    fill: none;
+    stroke: #21262d;
+    stroke-width: 8;
+  }
+  .ring-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease, stroke .4s;
+    stroke-dasharray: 251.2;
+    stroke-dashoffset: 251.2;
+  }
+  .score-num {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .score-label-text {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .score-sub {
+    font-size: 11px;
+    color: #7d8590;
+  }
+
+  /* Risk bar */
+  .risk-bar-section {
+    padding: 0 16px 14px;
+  }
+  .risk-bar-wrap {
+    height: 6px;
+    background: #21262d;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .risk-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease, background .4s;
+    width: 0%;
+  }
+  .risk-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #7d8590;
+  }
+
+  /* Flags */
+  .flags-section {
+    padding: 0 16px 14px;
+  }
+  .flags-title {
+    font-size: 11px;
+    color: #7d8590;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .flags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .flag-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  .flag-item.bad {
+    background: rgba(248,81,73,.1);
+    border: 1px solid rgba(248,81,73,.2);
+    color: #ffa198;
+  }
+  .flag-item.good {
+    background: rgba(63,185,80,.08);
+    border: 1px solid rgba(63,185,80,.15);
+    color: #7ee787;
+  }
+  .flag-item.warn {
+    background: rgba(210,153,34,.1);
+    border: 1px solid rgba(210,153,34,.2);
+    color: #e3b341;
+  }
+  .flag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .bad .flag-dot { background: #f85149; }
+  .good .flag-dot { background: #3fb950; }
+  .warn .flag-dot { background: #e3b341; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #21262d;
+    padding: 0 16px;
+  }
+  .tab {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #7d8590;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s;
+  }
+  .tab.active {
+    color: #e6edf3;
+    border-bottom-color: #388bfd;
+  }
+  .tab-content { display: none; padding: 12px 16px; }
+  .tab-content.active { display: block; }
+
+  /* History */
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid #21262d;
+    gap: 8px;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-url {
+    font-size: 11px;
+    color: #c9d1d9;
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .history-score {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .hs-safe { background: rgba(63,185,80,.15); color: #3fb950; }
+  .hs-warn { background: rgba(210,153,34,.15); color: #e3b341; }
+  .hs-danger { background: rgba(248,81,73,.15); color: #f85149; }
+
+  /* Footer */
+  .footer {
+    padding: 10px 16px;
+    border-top: 1px solid #21262d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-stat {
+    font-size: 11px;
+    color: #7d8590;
+  }
+  .footer-stat span {
+    color: #e6edf3;
+    font-weight: 600;
+  }
+  .rescan-btn {
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    background: transparent;
+    color: #c9d1d9;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .rescan-btn:hover { background: #21262d; }
+
+  /* Loading */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    gap: 14px;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #21262d;
+    border-top-color: #388bfd;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 12px; color: #7d8590; }
+
+  .empty-history {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 12px;
+    color: #7d8590;
+  }
+
+  .alert-banner {
+    margin: 0 16px 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .alert-banner.show { display: flex; }
+  .alert-danger { background: rgba(248,81,73,.15); border: 1px solid rgba(248,81,73,.3); color: #f85149; }
+  .alert-warn { background: rgba(210,153,34,.12); border: 1px solid rgba(210,153,34,.25); color: #e3b341; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon" id="logo-icon" style="background:#21262d; font-size:16px">🛡️</div>
+    <div>
+      <div class="logo-text">PhishGuard</div>
+      <div class="logo-sub">Real-time phishing detector</div>
+    </div>
+  </div>
+  <div class="header-badge" id="header-badge" style="background:#21262d;color:#7d8590">Scanning...</div>
+</div>
+
+<!-- URL bar -->
+<div class="url-bar">
+  <div class="url-label">Current URL</div>
+  <div class="url-text" id="current-url">Loading...</div>
+</div>
+
+<!-- Loading state -->
+<div class="loading" id="loading-state">
+  <div class="spinner"></div>
+  <div class="loading-text">Analyzing URL safety...</div>
+</div>
+
+<!-- Results (hidden until scan done) -->
+<div id="results-state" style="display:none">
+
+  <!-- Alert banner for high-risk -->
+  <div class="alert-banner" id="alert-banner">
+    <span>⚠️</span>
+    <span id="alert-text"></span>
+  </div>
+
+  <!-- Score ring -->
+  <div class="score-section">
+    <div class="score-ring-wrap">
+      <svg class="score-ring" width="100" height="100" viewBox="0 0 100 100">
+        <circle class="ring-bg" cx="50" cy="50" r="40"/>
+        <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="40"/>
+      </svg>
+      <div class="score-num" id="score-num">--</div>
+    </div>
+    <div class="score-label-text" id="score-label">Analyzing...</div>
+    <div class="score-sub" id="score-sub">Risk score out of 100</div>
+  </div>
+
+  <!-- Risk bar -->
+  <div class="risk-bar-section">
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-fill" id="risk-bar"></div>
+    </div>
+    <div class="risk-bar-labels">
+      <span>Safe</span>
+      <span>Suspicious</span>
+      <span>Dangerous</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('flags', this)">Red Flags</div>
+    <div class="tab" onclick="switchTab('history', this)">History</div>
+    <div class="tab" onclick="switchTab('info', this)">Details</div>
+  </div>
+
+  <!-- Flags tab -->
+  <div class="tab-content active" id="tab-flags">
+    <div class="flags-title">Detection results</div>
+    <div class="flags-list" id="flags-list"></div>
+  </div>
+
+  <!-- History tab -->
+  <div class="tab-content" id="tab-history">
+    <div id="history-list"></div>
+  </div>
+
+  <!-- Info tab -->
+  <div class="tab-content" id="tab-info">
+    <div id="info-list"></div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-stat">Scanned: <span id="scan-count">0</span> sites</div>
+  <button class="rescan-btn" id="rescan-btn" onclick="rescan()">Re-scan</button>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

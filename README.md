@@ -4,7 +4,7 @@
 
 PhishGuard is a Chrome Extension designed to detect phishing websites and help users stay safe online. It also includes password security tools to promote strong authentication practices.
 
----
+\---
 
 ## ✨ Features
 
@@ -12,9 +12,9 @@ PhishGuard is a Chrome Extension designed to detect phishing websites and help u
 * 🔐 Password Strength Checker
 * 💡 Password Suggestion Tool
 * 👁️ Show/Hide Password
-* ⚡ Lightweight & fast extension
+* ⚡ Lightweight \& fast extension
 
----
+\---
 
 ## 🧩 How to Install (Chrome)
 
@@ -24,7 +24,7 @@ PhishGuard is a Chrome Extension designed to detect phishing websites and help u
 4. Click **Load Unpacked**
 5. Select the project folder
 
----
+\---
 
 ## 🛠️ Tech Stack
 
@@ -33,13 +33,31 @@ PhishGuard is a Chrome Extension designed to detect phishing websites and help u
 * JavaScript
 * Chrome Extension APIs
 
----
+\---
 
 ## 📸 Screenshots
 
-(Add extension popup and working screenshots)
+\## 📸 Screenshots
 
----
+
+
+\### 🔹 Extension Popup
+
+
+
+!\[Popup](screenshots/popup.png)
+
+
+
+\### 🔹 Phishing Warning
+
+
+
+!\[Warning](screenshots/warning.png)
+
+\---
+
+
 
 ## 🎯 Future Scope
 
@@ -47,9 +65,10 @@ PhishGuard is a Chrome Extension designed to detect phishing websites and help u
 * AI-based URL scanning
 * Chrome Web Store deployment
 
----
+\---
 
 ## 👩‍💻 Author
 
 Diksha Sharma
-"# phishguard-extension" 
+"# phishguard-extension"
+
